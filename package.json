@@ -1,0 +1,32 @@
+{
+  "name": "@verikit/cli",
+  "version": "0.1.0",
+  "description": "Scaffolding CLI for VeriKit  detects your stack, installs the right packages, and wires up the integration.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Chidi E <hi@ceeso.dev>",
+  "bin": {
+    "verikit": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18.18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@clack/prompts": "^1.7.0",
+    "commander": "^15.0.0",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.23.12",
+    "typescript": "^6.0.3"
+  }
+}
