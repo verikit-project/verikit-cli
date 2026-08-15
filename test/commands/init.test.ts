@@ -378,3 +378,63 @@ test("runInit is idempotent: re-running reports files/theme import already exist
     removeFixture(dir);
   }
 });
+
+test("runInit packagesOnly: installs packages but generates no files", async () => {
+  const dir = makeFixture({
+    "package.json": PACKAGE_JSON({ next: "15.0.0", react: "19.0.0" }),
+    "src/app/globals.css": "body {}",
+  });
+  try {
+    const { prompts, events } = makeFakePrompts(["none", true, true]);
+    const { installPackages, calls } = makeFakeInstall(OK);
+
+    await withCwd(dir, () => runInit({ packagesOnly: true }, { prompts, installPackages }));
+
+    assert.ok(events.some((e) => e.includes("Install these packages?")));
+    assert.equal(calls.length, 1);
+    assert.ok(calls[0]?.packages.includes("@verikit/theme@^0.23.1"));
+
+    assert.equal(existsSync(path.join(dir, "src/verikit/server.ts")), false);
+    assert.equal(existsSync(path.join(dir, "src/app/api/verikit/[...path]/route.ts")), false);
+    assert.equal(readFileSync(path.join(dir, "src/app/globals.css"), "utf8"), "body {}");
+
+    assert.ok(events.some((e) => e.startsWith("outro:") && e.includes("packages installed")));
+    assert.ok(!events.some((e) => e.includes("is ready")));
+  } finally {
+    removeFixture(dir);
+  }
+});
+
+test("runInit packagesOnly + dryRun: installs nothing and reports a packages-only dry-run outro", async () => {
+  const dir = makeFixture({ "package.json": PACKAGE_JSON({ react: "19.0.0" }) });
+  try {
+    const { prompts, events } = makeFakePrompts(["none", true, true]);
+    const { installPackages, calls } = makeFakeInstall(OK);
+
+    await withCwd(dir, () => runInit({ packagesOnly: true, dryRun: true }, { prompts, installPackages }));
+
+    assert.equal(calls.length, 0);
+    assert.equal(existsSync(path.join(dir, "verikit/server.ts")), false);
+    assert.ok(
+      events.some((e) => e.startsWith("outro:") && e.includes("dry run complete — nothing was installed.")),
+    );
+  } finally {
+    removeFixture(dir);
+  }
+});
+
+test("runInit packagesOnly: install failure warns without mentioning file generation", async () => {
+  const dir = makeFixture({ "package.json": PACKAGE_JSON({ react: "19.0.0" }) });
+  try {
+    const { prompts, events } = makeFakePrompts(["none", true, true]);
+    const { installPackages } = makeFakeInstall({ ok: false, output: "network error" });
+
+    await withCwd(dir, () => runInit({ packagesOnly: true }, { prompts, installPackages }));
+
+    assert.ok(events.some((e) => e === "log:warn:Install manually to finish setup."));
+    assert.ok(!events.some((e) => e.includes("Continuing to generate integration files")));
+    assert.equal(existsSync(path.join(dir, "verikit/server.ts")), false);
+  } finally {
+    removeFixture(dir);
+  }
+});

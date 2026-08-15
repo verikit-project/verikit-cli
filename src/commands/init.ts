@@ -14,6 +14,8 @@ import { logo } from "../utils/banner.js";
 export interface InitOptions {
   skipInstall?: boolean;
   dryRun?: boolean;
+  /** Install the resolved packages but skip generating server.ts/route/theme files. */
+  packagesOnly?: boolean;
 }
 
 export interface SelectOption {
@@ -162,7 +164,11 @@ export async function runInit(options: InitOptions, deps: InitDeps = defaultDeps
   }
 
   const proceed = await prompts.confirm({
-    message: dryRun ? "Preview this configuration?" : "Set up VeriKit with this configuration?",
+    message: dryRun
+      ? "Preview this configuration?"
+      : options.packagesOnly
+        ? "Install these packages?"
+        : "Set up VeriKit with this configuration?",
   });
   if (prompts.isCancel(proceed) || !proceed) return cancelled(prompts);
 
@@ -184,49 +190,67 @@ export async function runInit(options: InitOptions, deps: InitDeps = defaultDeps
     } else {
       spinner.stop("Failed to install dependencies");
       prompts.log.error(result.output.trim().slice(-2000));
-      prompts.log.warn("Continuing to generate integration files — install manually to finish setup.");
-    }
-  }
-
-  const srcRoot = detectSrcRoot(cwd);
-  const server = generateServer(srcRoot, adapter, dryRun);
-  report(prompts, server.serverOutcome, `verikit/server.ts`, relative(cwd, server.serverFile), dryRun);
-  report(prompts, server.exampleOutcome, `example resource`, relative(cwd, server.exampleFile), dryRun);
-
-  if (framework.ui === "next") {
-    if (framework.appDir) {
-      const route = generateNextRoute(framework.appDir, server.serverFile, dryRun);
-      report(prompts, route.outcome, "API route", relative(cwd, route.routeFile), dryRun);
-    } else {
       prompts.log.warn(
-        "Pages Router detected — VeriKit CLI only wires up the App Router automatically. " +
-          "Mount `verikit` from `verikit/server.ts` as a catch-all route handler manually.",
+        options.packagesOnly
+          ? "Install manually to finish setup."
+          : "Continuing to generate integration files — install manually to finish setup.",
       );
     }
   }
 
-  if (theme) {
-    const result = applyTheme(cwd, dryRun);
-    if (result.status === "not-found") {
-      prompts.log.warn(
-        `Couldn't find a global stylesheet to configure. Add this import to your app's global CSS:\n  ${THEME_IMPORT}`,
-      );
-    } else {
-      report(
-        prompts,
-        result.status === "inserted" ? "created" : "exists",
-        "theme import",
-        relative(cwd, result.file),
-        dryRun,
-      );
+  if (!options.packagesOnly) {
+    const srcRoot = detectSrcRoot(cwd);
+    const server = generateServer(srcRoot, adapter, dryRun);
+    report(prompts, server.serverOutcome, `verikit/server.ts`, relative(cwd, server.serverFile), dryRun);
+    report(prompts, server.exampleOutcome, `example resource`, relative(cwd, server.exampleFile), dryRun);
+
+    if (framework.ui === "next") {
+      if (framework.appDir) {
+        const route = generateNextRoute(framework.appDir, server.serverFile, dryRun);
+        report(prompts, route.outcome, "API route", relative(cwd, route.routeFile), dryRun);
+      } else {
+        prompts.log.warn(
+          "Pages Router detected — VeriKit CLI only wires up the App Router automatically. " +
+            "Mount `verikit` from `verikit/server.ts` as a catch-all route handler manually.",
+        );
+      }
+    }
+
+    if (theme) {
+      const result = applyTheme(cwd, dryRun);
+      if (result.status === "not-found") {
+        prompts.log.warn(
+          `Couldn't find a global stylesheet to configure. Add this import to your app's global CSS:\n  ${THEME_IMPORT}`,
+        );
+      } else {
+        report(
+          prompts,
+          result.status === "inserted" ? "created" : "exists",
+          "theme import",
+          relative(cwd, result.file),
+          dryRun,
+        );
+      }
     }
   }
 
-  prompts.outro(
-    dryRun
-      ? `${logo()} dry run complete — nothing was installed or written.`
-      : `${logo()} is ready.\n\nRun:\n  ${DEV_COMMAND[packageManager]}\n\nDocs:\n  verikit.dev/getting-started`,
-  );
+  prompts.outro(outroMessage({ dryRun, packagesOnly: Boolean(options.packagesOnly), packageManager }));
+}
+
+function outroMessage(opts: {
+  dryRun: boolean;
+  packagesOnly: boolean;
+  packageManager: PackageManager;
+}): string {
+  if (opts.dryRun) {
+    return opts.packagesOnly
+      ? `${logo()} dry run complete — nothing was installed.`
+      : `${logo()} dry run complete — nothing was installed or written.`;
+  }
+  if (opts.packagesOnly) {
+    return `${logo()} packages installed.`;
+  }
+  return `${logo()} is ready.\n\nRun:\n  ${DEV_COMMAND[opts.packageManager]}\n\nDocs:\n  verikit.dev/getting-started`;
 }
 
 function report(

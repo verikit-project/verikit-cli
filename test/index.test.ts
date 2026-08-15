@@ -4,11 +4,11 @@ import { InitAbort } from "../src/commands/init.js";
 import { createProgram, runInitCommand } from "../src/index.js";
 
 test("runInitCommand forwards parsed options to runInit", async () => {
-  const calls: { skipInstall?: boolean; dryRun?: boolean }[] = [];
-  await runInitCommand({ skipInstall: true, dryRun: false }, async (options) => {
+  const calls: object[] = [];
+  await runInitCommand({ skipInstall: true, dryRun: false, packagesOnly: true }, async (options) => {
     calls.push(options);
   });
-  assert.deepEqual(calls, [{ skipInstall: true, dryRun: false }]);
+  assert.deepEqual(calls, [{ skipInstall: true, dryRun: false, packagesOnly: true }]);
 });
 
 test("runInitCommand sets process.exitCode from an InitAbort and swallows it", async () => {
@@ -56,6 +56,16 @@ test("createProgram wires up the init command with its options", () => {
   assert.ok(optionFlags.includes("--dry-run"));
 });
 
+test("createProgram wires up the install command with its options", () => {
+  const program = createProgram();
+
+  const install = program.commands.find((c) => c.name() === "install");
+  assert.ok(install);
+  const optionFlags = install.options.map((o) => o.long);
+  assert.ok(optionFlags.includes("--dry-run"));
+  assert.ok(!optionFlags.includes("--skip-install"));
+});
+
 test("createProgram's init command parses flags and invokes the injected run function", async () => {
   const calls: { skipInstall?: boolean; dryRun?: boolean }[] = [];
   const program = createProgram(async (options) => {
@@ -68,12 +78,34 @@ test("createProgram's init command parses flags and invokes the injected run fun
 });
 
 test("createProgram's init command defaults flags to undefined when omitted", async () => {
-  const calls: { skipInstall?: boolean; dryRun?: boolean }[] = [];
+  const calls: object[] = [];
   const program = createProgram(async (options) => {
     calls.push(options);
   });
 
   await program.parseAsync(["node", "verikit", "init"]);
 
-  assert.deepEqual(calls, [{ skipInstall: undefined, dryRun: undefined }]);
+  assert.deepEqual(calls, [{}]);
+});
+
+test("createProgram's install command forces packagesOnly and parses --dry-run", async () => {
+  const calls: object[] = [];
+  const program = createProgram(async (options) => {
+    calls.push(options);
+  });
+
+  await program.parseAsync(["node", "verikit", "install", "--dry-run"]);
+
+  assert.deepEqual(calls, [{ dryRun: true, packagesOnly: true }]);
+});
+
+test("createProgram's install command defaults dryRun to undefined when omitted", async () => {
+  const calls: object[] = [];
+  const program = createProgram(async (options) => {
+    calls.push(options);
+  });
+
+  await program.parseAsync(["node", "verikit", "install"]);
+
+  assert.deepEqual(calls, [{ packagesOnly: true }]);
 });

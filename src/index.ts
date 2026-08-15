@@ -6,15 +6,12 @@ import { InitAbort, runInit, type InitOptions } from "./commands/init.js";
 export type RunInit = (options: InitOptions) => Promise<void>;
 
 /**
- * Bridges commander's `init` action to `runInit`, translating a thrown `InitAbort` into
+ * Bridges a commander action to `runInit`, translating a thrown `InitAbort` into
  * `process.exitCode` instead of letting it surface as an unhandled rejection.
  */
-export async function runInitCommand(
-  opts: { skipInstall?: boolean; dryRun?: boolean },
-  run: RunInit = runInit,
-): Promise<void> {
+export async function runInitCommand(opts: InitOptions, run: RunInit = runInit): Promise<void> {
   try {
-    await run({ skipInstall: opts.skipInstall, dryRun: opts.dryRun });
+    await run(opts);
   } catch (err) {
     if (err instanceof InitAbort) {
       process.exitCode = err.code;
@@ -24,7 +21,7 @@ export async function runInitCommand(
   }
 }
 
-/** `run` overrides what `init` ultimately calls — used in tests to avoid driving a real interactive prompt. */
+/** `run` overrides what `init`/`install` ultimately call — used in tests to avoid driving a real interactive prompt. */
 export function createProgram(run: RunInit = runInit): Command {
   const program = new Command();
 
@@ -36,6 +33,12 @@ export function createProgram(run: RunInit = runInit): Command {
     .option("--skip-install", "Generate files without installing dependencies")
     .option("--dry-run", "Show what would be installed and generated without changing anything")
     .action((opts: { skipInstall?: boolean; dryRun?: boolean }) => runInitCommand(opts, run));
+
+  program
+    .command("install")
+    .description("Install VeriKit packages for your detected stack, without generating integration files")
+    .option("--dry-run", "Show what would be installed without changing anything")
+    .action((opts: { dryRun?: boolean }) => runInitCommand({ ...opts, packagesOnly: true }, run));
 
   return program;
 }
