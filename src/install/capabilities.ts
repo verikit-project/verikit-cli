@@ -2,12 +2,11 @@ import type { Adapter } from "../detect/database.js";
 import type { UiFramework } from "../detect/framework.js";
 
 /**
- * Top-level packages to install per capability, kept explicit rather than relying on transitive
- * resolution: package managers with isolated node_modules (pnpm, Yarn PnP/strict) don't expose a
- * dependency's own dependencies to application code, so anything the generated integration code
- * imports directly (e.g. `@verikit/theme/globals.css`) has to be a direct dependency too.
+ * Top-level dependencies required by each capability. Kept explicit because
+ * generated integrations may import packages directly, which isolated
+ * node_modules setups don't expose transitively.
  *
- * Mirrors the workspace at framework/ (@verikit/* 0.23.x)  update alongside it.
+ * Keep in sync with the framework's @verikit/* versions.
  */
 const VERIKIT_VERSION = "^0.23.1";
 

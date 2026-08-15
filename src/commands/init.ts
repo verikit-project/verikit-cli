@@ -9,6 +9,7 @@ import { generateNextRoute } from "../generators/route.js";
 import { applyTheme, THEME_IMPORT } from "../generators/theme.js";
 import { resolvePackages } from "../install/capabilities.js";
 import { installPackages } from "../install/dependencies.js";
+import { logo } from "../utils/banner.js";
 
 export interface InitOptions {
   skipInstall?: boolean;
@@ -32,7 +33,7 @@ export async function runInit(options: InitOptions): Promise<void> {
   const cwd = process.cwd();
   const dryRun = Boolean(options.dryRun);
 
-  clack.intro(dryRun ? "VeriKit (dry run)" : "VeriKit");
+  clack.intro(logo(dryRun ? "(dry run)" : undefined));
 
   const pkg = readPackageJson(cwd);
   if (!pkg) {
@@ -171,8 +172,8 @@ export async function runInit(options: InitOptions): Promise<void> {
 
   clack.outro(
     dryRun
-      ? "Dry run complete — nothing was installed or written."
-      : `VeriKit is ready.\n\nRun:\n  ${DEV_COMMAND[packageManager]}\n\nDocs:\n  verikit.dev/getting-started`,
+      ? `${logo()} dry run complete — nothing was installed or written.`
+      : `${logo()} is ready.\n\nRun:\n  ${DEV_COMMAND[packageManager]}\n\nDocs:\n  verikit.dev/getting-started`,
   );
 }
 
