@@ -25,6 +25,7 @@ test("runInit throws InitAbort(1) when there's no package.json", async () => {
 test("runInit: full happy path with Next.js + Prisma detected, install succeeds", async () => {
   const dir = makeFixture({
     "package.json": PACKAGE_JSON({ next: "15.0.0", react: "19.0.0", "@prisma/client": "6.0.0" }),
+    "package-lock.json": "{}",
     "src/app/globals.css": "body {}",
   });
   try {

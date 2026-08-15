@@ -30,3 +30,23 @@ export async function withCwd<T>(dir: string, fn: () => Promise<T> | T): Promise
 
 export const PACKAGE_JSON = (deps: Record<string, string> = {}): string =>
   JSON.stringify({ name: "fixture", private: true, dependencies: deps });
+
+function setEnv(key: string, value: string | undefined): void {
+  if (value === undefined) delete process.env[key];
+  else process.env[key] = value;
+}
+
+/** Runs `fn` with `process.env[key]` set to `value` (or deleted, if `undefined`), always restoring it afterward. */
+export async function withEnv<T>(
+  key: string,
+  value: string | undefined,
+  fn: () => Promise<T> | T,
+): Promise<T> {
+  const previous = process.env[key];
+  setEnv(key, value);
+  try {
+    return await fn();
+  } finally {
+    setEnv(key, previous);
+  }
+}
