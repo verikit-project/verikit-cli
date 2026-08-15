@@ -22,9 +22,9 @@ export function applyTheme(cwd: string, dryRun = false): ThemeOutcome {
   for (const candidate of CANDIDATE_STYLESHEETS) {
     const file = path.join(cwd, candidate);
     if (!existsSync(file)) continue;
-    const result = insertLineIfAbsent(file, THEME_IMPORT, dryRun);
-    if (result === "not-found") continue;
-    return { status: result, file };
+    // The existsSync check above guarantees insertLineIfAbsent can't return "not-found" here.
+    const status = insertLineIfAbsent(file, THEME_IMPORT, dryRun) as "inserted" | "already-present";
+    return { status, file };
   }
   return { status: "not-found" };
 }

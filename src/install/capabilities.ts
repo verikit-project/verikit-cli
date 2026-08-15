@@ -1,5 +1,6 @@
 import type { Adapter } from "../detect/database.js";
 import type { UiFramework } from "../detect/framework.js";
+import { hasDependency, type PackageJson } from "../detect/project.js";
 
 /**
  * Top-level dependencies required by each capability. Kept explicit because
@@ -14,6 +15,12 @@ function verikit(...names: string[]): string[] {
   return names.map((name) => `@verikit/${name}@${VERIKIT_VERSION}`);
 }
 
+/** Strips a trailing `@version` from an install spec, e.g. `"@verikit/react@^0.23.1"` -> `"@verikit/react"`. */
+function bareName(spec: string): string {
+  const at = spec.lastIndexOf("@");
+  return at > 0 ? spec.slice(0, at) : spec;
+}
+
 export interface ResolvedPackages {
   /** Packages to add as normal dependencies. */
   packages: string[];
@@ -24,15 +31,15 @@ export interface StackSelection {
   ui: UiFramework;
   theme: boolean;
   adapter: Adapter;
-  /** Peer packages already present in the target project (skip re-adding these). */
-  existing: Set<string>;
+  /** The target project's `package.json`, used to skip packages it already declares. */
+  pkg: PackageJson;
 }
 
 export function resolvePackages(selection: StackSelection): ResolvedPackages {
   const packages: string[] = [];
-  const add = (...names: string[]) => {
-    for (const name of names) {
-      if (!selection.existing.has(name)) packages.push(name);
+  const add = (...specs: string[]) => {
+    for (const spec of specs) {
+      if (!hasDependency(selection.pkg, bareName(spec))) packages.push(spec);
     }
   };
 
