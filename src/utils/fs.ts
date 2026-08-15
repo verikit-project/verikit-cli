@@ -26,7 +26,11 @@ export type InsertOutcome = "inserted" | "already-present" | "not-found";
  * Inserts `line` at the top of `file` if it isn't already present anywhere in the file. With
  * `dryRun`, reports what would happen without touching the filesystem.
  */
-export function insertLineIfAbsent(file: string, line: string, dryRun = false): InsertOutcome {
+export function insertLineIfAbsent(
+  file: string,
+  line: string,
+  dryRun = false,
+): InsertOutcome {
   if (!existsSync(file)) return "not-found";
   const contents = readFileSync(file, "utf8");
   if (contents.includes(line)) return "already-present";

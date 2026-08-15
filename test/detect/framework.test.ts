@@ -7,7 +7,9 @@ import path from "node:path";
 test("detectFramework finds Next.js with a src/app router", () => {
   const dir = makeFixture({ "src/app/layout.tsx": "" });
   try {
-    const result = detectFramework(dir, { dependencies: { next: "15.0.0", react: "19.0.0" } });
+    const result = detectFramework(dir, {
+      dependencies: { next: "15.0.0", react: "19.0.0" },
+    });
     assert.equal(result.ui, "next");
     assert.equal(result.appDir, path.join(dir, "src"));
   } finally {
@@ -72,7 +74,9 @@ test("detectFramework reports no UI framework when none is detected", () => {
 test("detectFramework detects TypeScript via the dependency", () => {
   const dir = makeFixture();
   try {
-    const result = detectFramework(dir, { devDependencies: { typescript: "5.0.0" } });
+    const result = detectFramework(dir, {
+      devDependencies: { typescript: "5.0.0" },
+    });
     assert.equal(result.typescript, true);
   } finally {
     removeFixture(dir);

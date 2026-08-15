@@ -1,0 +1,8 @@
+dist
+.test-dist
+coverage
+node_modules
+framework
+pnpm-lock.yaml
+*.tsbuildinfo
+*.md

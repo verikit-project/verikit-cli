@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { detectPackageManager, installCommand } from "../../src/detect/package-manager.js";
+import {
+  detectPackageManager,
+  installCommand,
+} from "../../src/detect/package-manager.js";
 import { makeFixture, removeFixture, withEnv } from "../support/fixture.js";
 
 test("detectPackageManager finds pnpm via pnpm-lock.yaml", () => {
@@ -91,8 +94,20 @@ test("detectPackageManager defaults to npm with no lockfile and no user agent", 
 });
 
 test("installCommand builds the right invocation per package manager", () => {
-  assert.deepEqual(installCommand("pnpm", ["a", "b"]), { command: "pnpm", args: ["add", "a", "b"] });
-  assert.deepEqual(installCommand("yarn", ["a"]), { command: "yarn", args: ["add", "a"] });
-  assert.deepEqual(installCommand("bun", ["a"]), { command: "bun", args: ["add", "a"] });
-  assert.deepEqual(installCommand("npm", ["a"]), { command: "npm", args: ["install", "a"] });
+  assert.deepEqual(installCommand("pnpm", ["a", "b"]), {
+    command: "pnpm",
+    args: ["add", "a", "b"],
+  });
+  assert.deepEqual(installCommand("yarn", ["a"]), {
+    command: "yarn",
+    args: ["add", "a"],
+  });
+  assert.deepEqual(installCommand("bun", ["a"]), {
+    command: "bun",
+    args: ["add", "a"],
+  });
+  assert.deepEqual(installCommand("npm", ["a"]), {
+    command: "npm",
+    args: ["install", "a"],
+  });
 });

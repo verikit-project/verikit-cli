@@ -1,4 +1,7 @@
-import type { InstallPackages, InstallResult } from "../../src/install/dependencies.js";
+import type {
+  InstallPackages,
+  InstallResult,
+} from "../../src/install/dependencies.js";
 import type { Prompts } from "../../src/commands/init.js";
 
 export const CANCEL = Symbol("cancel");

@@ -6,17 +6,35 @@ import type { PackageJson } from "../../src/detect/project.js";
 const EMPTY_PKG: PackageJson = {};
 
 test("resolvePackages adds nothing when server is false and there's no UI/adapter", () => {
-  const { packages } = resolvePackages({ server: false, ui: null, theme: false, adapter: null, pkg: EMPTY_PKG });
+  const { packages } = resolvePackages({
+    server: false,
+    ui: null,
+    theme: false,
+    adapter: null,
+    pkg: EMPTY_PKG,
+  });
   assert.deepEqual(packages, []);
 });
 
 test("resolvePackages adds @verikit/server when server is true", () => {
-  const { packages } = resolvePackages({ server: true, ui: null, theme: false, adapter: null, pkg: EMPTY_PKG });
+  const { packages } = resolvePackages({
+    server: true,
+    ui: null,
+    theme: false,
+    adapter: null,
+    pkg: EMPTY_PKG,
+  });
   assert.deepEqual(packages, ["@verikit/server@^0.23.1"]);
 });
 
 test("resolvePackages adds React packages for ui: 'react'", () => {
-  const { packages } = resolvePackages({ server: false, ui: "react", theme: false, adapter: null, pkg: EMPTY_PKG });
+  const { packages } = resolvePackages({
+    server: false,
+    ui: "react",
+    theme: false,
+    adapter: null,
+    pkg: EMPTY_PKG,
+  });
   assert.deepEqual(packages, [
     "@verikit/react@^0.23.1",
     "@tanstack/react-query",
@@ -27,17 +45,35 @@ test("resolvePackages adds React packages for ui: 'react'", () => {
 });
 
 test("resolvePackages treats ui: 'next' the same as 'react'", () => {
-  const { packages } = resolvePackages({ server: false, ui: "next", theme: false, adapter: null, pkg: EMPTY_PKG });
+  const { packages } = resolvePackages({
+    server: false,
+    ui: "next",
+    theme: false,
+    adapter: null,
+    pkg: EMPTY_PKG,
+  });
   assert.ok(packages.includes("@verikit/react@^0.23.1"));
 });
 
 test("resolvePackages adds the theme package for React when theme is true", () => {
-  const { packages } = resolvePackages({ server: false, ui: "react", theme: true, adapter: null, pkg: EMPTY_PKG });
+  const { packages } = resolvePackages({
+    server: false,
+    ui: "react",
+    theme: true,
+    adapter: null,
+    pkg: EMPTY_PKG,
+  });
   assert.ok(packages.includes("@verikit/theme@^0.23.1"));
 });
 
 test("resolvePackages adds Vue packages for ui: 'vue'", () => {
-  const { packages } = resolvePackages({ server: false, ui: "vue", theme: false, adapter: null, pkg: EMPTY_PKG });
+  const { packages } = resolvePackages({
+    server: false,
+    ui: "vue",
+    theme: false,
+    adapter: null,
+    pkg: EMPTY_PKG,
+  });
   assert.deepEqual(packages, [
     "@verikit/vue@^0.23.1",
     "@tanstack/vue-query",
@@ -48,12 +84,24 @@ test("resolvePackages adds Vue packages for ui: 'vue'", () => {
 });
 
 test("resolvePackages adds the theme package for Vue when theme is true", () => {
-  const { packages } = resolvePackages({ server: false, ui: "vue", theme: true, adapter: null, pkg: EMPTY_PKG });
+  const { packages } = resolvePackages({
+    server: false,
+    ui: "vue",
+    theme: true,
+    adapter: null,
+    pkg: EMPTY_PKG,
+  });
   assert.ok(packages.includes("@verikit/theme@^0.23.1"));
 });
 
 test("resolvePackages adds the Prisma adapter package", () => {
-  const { packages } = resolvePackages({ server: false, ui: null, theme: false, adapter: "prisma", pkg: EMPTY_PKG });
+  const { packages } = resolvePackages({
+    server: false,
+    ui: null,
+    theme: false,
+    adapter: "prisma",
+    pkg: EMPTY_PKG,
+  });
   assert.deepEqual(packages, ["@verikit/prisma@^0.23.1"]);
 });
 
@@ -70,9 +118,18 @@ test("resolvePackages adds the Drizzle adapter package", () => {
 
 test("resolvePackages skips packages the project already declares", () => {
   const pkg: PackageJson = {
-    dependencies: { "@verikit/react": "0.23.0", "@tanstack/react-query": "5.0.0" },
+    dependencies: {
+      "@verikit/react": "0.23.0",
+      "@tanstack/react-query": "5.0.0",
+    },
   };
-  const { packages } = resolvePackages({ server: true, ui: "react", theme: false, adapter: null, pkg });
+  const { packages } = resolvePackages({
+    server: true,
+    ui: "react",
+    theme: false,
+    adapter: null,
+    pkg,
+  });
   assert.ok(!packages.includes("@verikit/react@^0.23.1"));
   assert.ok(!packages.includes("@tanstack/react-query"));
   assert.ok(packages.includes("@verikit/server@^0.23.1"));

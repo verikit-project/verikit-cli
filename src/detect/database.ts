@@ -9,7 +9,8 @@ export interface DatabaseInfo {
 
 export function detectDatabase(pkg: PackageJson): DatabaseInfo {
   return {
-    prisma: hasDependency(pkg, "@prisma/client") || hasDependency(pkg, "prisma"),
+    prisma:
+      hasDependency(pkg, "@prisma/client") || hasDependency(pkg, "prisma"),
     drizzle: hasDependency(pkg, "drizzle-orm"),
   };
 }

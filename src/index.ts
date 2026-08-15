@@ -9,7 +9,10 @@ export type RunInit = (options: InitOptions) => Promise<void>;
  * Bridges a commander action to `runInit`, translating a thrown `InitAbort` into
  * `process.exitCode` instead of letting it surface as an unhandled rejection.
  */
-export async function runInitCommand(opts: InitOptions, run: RunInit = runInit): Promise<void> {
+export async function runInitCommand(
+  opts: InitOptions,
+  run: RunInit = runInit,
+): Promise<void> {
   try {
     await run(opts);
   } catch (err) {
@@ -21,24 +24,41 @@ export async function runInitCommand(opts: InitOptions, run: RunInit = runInit):
   }
 }
 
-/** `run` overrides what `init`/`install` ultimately call — used in tests to avoid driving a real interactive prompt. */
+/** `run` overrides what `init`/`install` ultimately call  used in tests to avoid driving a real interactive prompt. */
 export function createProgram(run: RunInit = runInit): Command {
   const program = new Command();
 
-  program.name("verikit").description("Scaffolding CLI for VeriKit").version("0.1.0");
+  program
+    .name("verikit")
+    .description("Scaffolding CLI for VeriKit")
+    .version("0.1.0");
 
   program
     .command("init")
-    .description("Detect your stack, install VeriKit packages, and generate the integration")
+    .description(
+      "Detect your stack, install VeriKit packages, and generate the integration",
+    )
     .option("--skip-install", "Generate files without installing dependencies")
-    .option("--dry-run", "Show what would be installed and generated without changing anything")
-    .action((opts: { skipInstall?: boolean; dryRun?: boolean }) => runInitCommand(opts, run));
+    .option(
+      "--dry-run",
+      "Show what would be installed and generated without changing anything",
+    )
+    .action((opts: { skipInstall?: boolean; dryRun?: boolean }) =>
+      runInitCommand(opts, run),
+    );
 
   program
     .command("install")
-    .description("Install VeriKit packages for your detected stack, without generating integration files")
-    .option("--dry-run", "Show what would be installed without changing anything")
-    .action((opts: { dryRun?: boolean }) => runInitCommand({ ...opts, packagesOnly: true }, run));
+    .description(
+      "Install VeriKit packages for your detected stack, without generating integration files",
+    )
+    .option(
+      "--dry-run",
+      "Show what would be installed without changing anything",
+    )
+    .action((opts: { dryRun?: boolean }) =>
+      runInitCommand({ ...opts, packagesOnly: true }, run),
+    );
 
   return program;
 }

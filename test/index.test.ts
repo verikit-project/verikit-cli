@@ -5,10 +5,15 @@ import { createProgram, runInitCommand } from "../src/index.js";
 
 test("runInitCommand forwards parsed options to runInit", async () => {
   const calls: object[] = [];
-  await runInitCommand({ skipInstall: true, dryRun: false, packagesOnly: true }, async (options) => {
-    calls.push(options);
-  });
-  assert.deepEqual(calls, [{ skipInstall: true, dryRun: false, packagesOnly: true }]);
+  await runInitCommand(
+    { skipInstall: true, dryRun: false, packagesOnly: true },
+    async (options) => {
+      calls.push(options);
+    },
+  );
+  assert.deepEqual(calls, [
+    { skipInstall: true, dryRun: false, packagesOnly: true },
+  ]);
 });
 
 test("runInitCommand sets process.exitCode from an InitAbort and swallows it", async () => {
@@ -72,7 +77,13 @@ test("createProgram's init command parses flags and invokes the injected run fun
     calls.push(options);
   });
 
-  await program.parseAsync(["node", "verikit", "init", "--skip-install", "--dry-run"]);
+  await program.parseAsync([
+    "node",
+    "verikit",
+    "init",
+    "--skip-install",
+    "--dry-run",
+  ]);
 
   assert.deepEqual(calls, [{ skipInstall: true, dryRun: true }]);
 });

@@ -9,7 +9,10 @@ test("applyTheme inserts the import into the first stylesheet it finds", () => {
   const dir = makeFixture({ "src/app/globals.css": "body { margin: 0; }" });
   try {
     const result = applyTheme(dir);
-    assert.deepEqual(result, { status: "inserted", file: path.join(dir, "src/app/globals.css") });
+    assert.deepEqual(result, {
+      status: "inserted",
+      file: path.join(dir, "src/app/globals.css"),
+    });
     assert.equal(
       readFileSync(path.join(dir, "src/app/globals.css"), "utf8"),
       `${THEME_IMPORT}\nbody { margin: 0; }`,
@@ -25,7 +28,10 @@ test("applyTheme skips missing candidates before finding one that exists", () =>
   try {
     const result = applyTheme(dir);
     assert.equal(result.status, "inserted");
-    assert.equal((result as { file: string }).file, path.join(dir, "styles/globals.css"));
+    assert.equal(
+      (result as { file: string }).file,
+      path.join(dir, "styles/globals.css"),
+    );
   } finally {
     removeFixture(dir);
   }
@@ -55,7 +61,10 @@ test("applyTheme in dry-run mode reports inserted but writes nothing", () => {
   try {
     const result = applyTheme(dir, true);
     assert.equal(result.status, "inserted");
-    assert.equal(readFileSync(path.join(dir, "src/style.css"), "utf8"), "body {}");
+    assert.equal(
+      readFileSync(path.join(dir, "src/style.css"), "utf8"),
+      "body {}",
+    );
   } finally {
     removeFixture(dir);
   }

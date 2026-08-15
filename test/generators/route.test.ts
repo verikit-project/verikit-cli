@@ -18,7 +18,10 @@ test("generateNextRoute writes a catch-all route importing the server handler", 
     );
 
     const contents = readFileSync(result.routeFile, "utf8");
-    assert.match(contents, /import \{ verikit \} from "\.\.\/\.\.\/\.\.\/\.\.\/verikit\/server";/);
+    assert.match(
+      contents,
+      /import \{ verikit \} from "\.\.\/\.\.\/\.\.\/\.\.\/verikit\/server";/,
+    );
     assert.match(contents, /export const GET = verikit;/);
     assert.match(contents, /export const POST = verikit;/);
     assert.match(contents, /export const PATCH = verikit;/);
@@ -33,7 +36,15 @@ test("generateNextRoute prefixes a bare relative import with './'", () => {
   try {
     // Server file placed inside the route's own directory tree, so path.relative()
     // returns a path with no leading ".." segment.
-    const serverFile = path.join(dir, "app", "api", "verikit", "[...path]", "nested", "server.ts");
+    const serverFile = path.join(
+      dir,
+      "app",
+      "api",
+      "verikit",
+      "[...path]",
+      "nested",
+      "server.ts",
+    );
     const result = generateNextRoute(dir, serverFile);
     const contents = readFileSync(result.routeFile, "utf8");
     assert.match(contents, /import \{ verikit \} from "\.\/nested\/server";/);

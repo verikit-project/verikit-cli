@@ -18,7 +18,10 @@ export function removeFixture(dir: string): void {
 }
 
 /** Runs `fn` with `process.cwd()` set to `dir`, always restoring the original cwd afterward. */
-export async function withCwd<T>(dir: string, fn: () => Promise<T> | T): Promise<T> {
+export async function withCwd<T>(
+  dir: string,
+  fn: () => Promise<T> | T,
+): Promise<T> {
   const previous = process.cwd();
   process.chdir(dir);
   try {

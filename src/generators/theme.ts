@@ -23,7 +23,8 @@ export function applyTheme(cwd: string, dryRun = false): ThemeOutcome {
     const file = path.join(cwd, candidate);
     if (!existsSync(file)) continue;
     // The existsSync check above guarantees insertLineIfAbsent can't return "not-found" here.
-    const status = insertLineIfAbsent(file, THEME_IMPORT, dryRun) as "inserted" | "already-present";
+    const status = insertLineIfAbsent(file, THEME_IMPORT, dryRun) as
+      "inserted" | "already-present";
     return { status, file };
   }
   return { status: "not-found" };

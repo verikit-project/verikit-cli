@@ -1,13 +1,22 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { detectSrcRoot, hasDependency, readPackageJson } from "../../src/detect/project.js";
+import {
+  detectSrcRoot,
+  hasDependency,
+  readPackageJson,
+} from "../../src/detect/project.js";
 import { makeFixture, removeFixture } from "../support/fixture.js";
 import path from "node:path";
 
 test("readPackageJson parses an existing package.json", () => {
-  const dir = makeFixture({ "package.json": '{"name":"fixture","dependencies":{"react":"19.0.0"}}' });
+  const dir = makeFixture({
+    "package.json": '{"name":"fixture","dependencies":{"react":"19.0.0"}}',
+  });
   try {
-    assert.deepEqual(readPackageJson(dir), { name: "fixture", dependencies: { react: "19.0.0" } });
+    assert.deepEqual(readPackageJson(dir), {
+      name: "fixture",
+      dependencies: { react: "19.0.0" },
+    });
   } finally {
     removeFixture(dir);
   }
@@ -32,8 +41,14 @@ test("readPackageJson returns null for invalid JSON", () => {
 });
 
 test("hasDependency checks dependencies and devDependencies", () => {
-  assert.equal(hasDependency({ dependencies: { react: "19.0.0" } }, "react"), true);
-  assert.equal(hasDependency({ devDependencies: { typescript: "5.0.0" } }, "typescript"), true);
+  assert.equal(
+    hasDependency({ dependencies: { react: "19.0.0" } }, "react"),
+    true,
+  );
+  assert.equal(
+    hasDependency({ devDependencies: { typescript: "5.0.0" } }, "typescript"),
+    true,
+  );
   assert.equal(hasDependency({}, "react"), false);
   assert.equal(hasDependency({ dependencies: {} }, "react"), false);
 });

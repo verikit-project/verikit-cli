@@ -50,8 +50,16 @@ export function generateServer(
   const serverFile = path.join(srcRoot, "verikit", "server.ts");
   const exampleFile = path.join(srcRoot, "verikit", "resources", "example.ts");
 
-  const serverOutcome = writeFileIfAbsent(serverFile, serverSource(adapter), dryRun);
-  const exampleOutcome = writeFileIfAbsent(exampleFile, EXAMPLE_RESOURCE, dryRun);
+  const serverOutcome = writeFileIfAbsent(
+    serverFile,
+    serverSource(adapter),
+    dryRun,
+  );
+  const exampleOutcome = writeFileIfAbsent(
+    exampleFile,
+    EXAMPLE_RESOURCE,
+    dryRun,
+  );
 
   return { serverFile, serverOutcome, exampleFile, exampleOutcome };
 }

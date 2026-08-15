@@ -19,9 +19,11 @@
     "dev": "tsx src/index.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "rm -rf .test-dist && tsc -p tsconfig.test.json && node --test $(find ./.test-dist/test -name '*.test.js' -type f | sort)",
     "test:coverage": "rm -rf .test-dist coverage && tsc -p tsconfig.test.json && node --test --experimental-test-coverage --test-coverage-lines=100 --test-coverage-branches=100 --test-coverage-functions=100 $(find ./.test-dist/test -name '*.test.js' -type f | sort)",
-    "verify": "pnpm typecheck && pnpm lint && pnpm build && pnpm test:coverage"
+    "verify": "pnpm typecheck && pnpm lint && pnpm build && pnpm format:check && pnpm test:coverage"
   },
   "dependencies": {
     "@clack/prompts": "^1.7.0",
@@ -32,7 +34,9 @@
     "@eslint/js": "^10.0.1",
     "@types/node": "^22.10.2",
     "eslint": "^10.7.0",
+    "eslint-config-prettier": "^10.1.8",
     "globals": "^17.7.0",
+    "prettier": "^3.9.6",
     "tsx": "^4.23.12",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.63.0"

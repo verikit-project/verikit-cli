@@ -44,7 +44,10 @@ test("writeFileIfAbsent in dry-run mode reports 'created' without writing", () =
 test("insertLineIfAbsent returns not-found when the file doesn't exist", () => {
   const dir = makeFixture();
   try {
-    const outcome = insertLineIfAbsent(path.join(dir, "missing.css"), "@import x;");
+    const outcome = insertLineIfAbsent(
+      path.join(dir, "missing.css"),
+      "@import x;",
+    );
     assert.equal(outcome, "not-found");
   } finally {
     removeFixture(dir);

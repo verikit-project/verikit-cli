@@ -20,7 +20,8 @@ function findAppRouterRoot(cwd: string): string | null {
 
 export function detectFramework(cwd: string, pkg: PackageJson): FrameworkInfo {
   const typescript =
-    hasDependency(pkg, "typescript") || existsSync(path.join(cwd, "tsconfig.json"));
+    hasDependency(pkg, "typescript") ||
+    existsSync(path.join(cwd, "tsconfig.json"));
 
   if (hasDependency(pkg, "next")) {
     return { ui: "next", appDir: findAppRouterRoot(cwd), typescript };
