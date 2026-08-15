@@ -36,3 +36,4 @@ Thumbs.db
 
 # Local package artifacts
 *.tgz
+.test-dist/
