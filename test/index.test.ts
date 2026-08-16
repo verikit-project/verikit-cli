@@ -1,4 +1,8 @@
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
+import { mkdtempSync, rmSync, symlinkSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import test from "node:test";
 import { InitAbort } from "../src/commands/init.js";
 import { createProgram, runInitCommand } from "../src/index.js";
@@ -119,4 +123,22 @@ test("createProgram's install command defaults dryRun to undefined when omitted"
   await program.parseAsync(["node", "verikit", "install"]);
 
   assert.deepEqual(calls, [{ packagesOnly: true }]);
+});
+
+test("the built entrypoint still runs when invoked through a symlink (npm/npx's bin layout)", () => {
+  // node_modules/.bin/<name> is always a symlink to the package's real file, never a copy  this
+  // reproduces that so the isMain check's realpath handling can't silently regress.
+  const compiledEntry = path.resolve(process.cwd(), ".test-dist/src/index.js");
+  const dir = mkdtempSync(path.join(tmpdir(), "verikit-cli-bin-symlink-"));
+  const link = path.join(dir, "verikit");
+  symlinkSync(compiledEntry, link);
+
+  try {
+    const output = execFileSync(process.execPath, [link, "--help"], {
+      encoding: "utf8",
+    });
+    assert.match(output, /Usage: verikit/);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
 });

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { Command } from "commander";
+import { realpathSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { InitAbort, runInit, type InitOptions } from "./commands/init.js";
 
@@ -64,9 +65,14 @@ export function createProgram(run: RunInit = runInit): Command {
 }
 
 /* node:coverage disable */
+// `process.argv[1]` is the path used to invoke this script  when run through npm/npx's `bin`
+// symlink (node_modules/.bin/verikit -> .../dist/index.js), that's the symlink path, while
+// `import.meta.url` is Node's ESM loader resolving to the real, symlink-followed path. Without
+// realpathSync here the two never match, `isMain` is always false, and the CLI silently no-ops
+// for every real install  only direct `node dist/index.js` invocations happened to line up.
 const isMain =
   typeof process.argv[1] === "string" &&
-  import.meta.url === pathToFileURL(process.argv[1]).href;
+  import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href;
 
 if (isMain) {
   void createProgram().parseAsync(process.argv);
