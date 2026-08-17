@@ -2,6 +2,10 @@
   "name": "@verikit/cli",
   "version": "0.2.0",
   "description": "Scaffolding CLI for VeriKit  detects your stack, installs the right packages, and wires up the integration.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/verikit-project/verikit-cli.git"
+  },
   "type": "module",
   "license": "MIT",
   "author": "Chidi E <hi@ceeso.dev>",
