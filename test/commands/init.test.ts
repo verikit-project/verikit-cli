@@ -52,6 +52,7 @@ test("runInit: full happy path with Next.js + Prisma detected, install succeeds"
     assert.ok(events.some((e) => e.includes("Detected Prisma")));
     assert.equal(calls.length, 1);
     assert.equal(calls[0]?.manager, "npm");
+    assert.ok(calls[0]?.packages.includes("@verikit/core@latest"));
     assert.ok(calls[0]?.packages.includes("@verikit/prisma@latest"));
     assert.ok(calls[0]?.packages.includes("@verikit/theme@latest"));
     assert.ok(events.some((e) => e === "spinner:stop:Installed dependencies"));
@@ -195,6 +196,25 @@ test("runInit lets an undetected UI framework be picked as Vue", async () => {
 
     await withCwd(dir, () => runInit({}, { prompts, installPackages }));
 
+    assert.ok(calls[0]?.packages.includes("@verikit/core@latest"));
+    assert.ok(calls[0]?.packages.includes("@verikit/vue@latest"));
+  } finally {
+    removeFixture(dir);
+  }
+});
+
+test("runInit treats Nuxt as Vue and installs core", async () => {
+  const dir = makeFixture({
+    "package.json": PACKAGE_JSON({ nuxt: "4.0.0" }),
+  });
+  try {
+    const { prompts, events } = makeFakePrompts(["none", true, true]);
+    const { installPackages, calls } = makeFakeInstall(OK);
+
+    await withCwd(dir, () => runInit({}, { prompts, installPackages }));
+
+    assert.ok(events.some((e) => e.includes("Detected Vue")));
+    assert.ok(calls[0]?.packages.includes("@verikit/core@latest"));
     assert.ok(calls[0]?.packages.includes("@verikit/vue@latest"));
   } finally {
     removeFixture(dir);

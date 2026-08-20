@@ -39,15 +39,20 @@ export function resolvePackages(selection: StackSelection): ResolvedPackages {
   const packages: string[] = [];
   const add = (...specs: string[]) => {
     for (const spec of specs) {
-      if (!hasDependency(selection.pkg, bareName(spec))) packages.push(spec);
+      if (
+        !hasDependency(selection.pkg, bareName(spec)) &&
+        !packages.includes(spec)
+      ) {
+        packages.push(spec);
+      }
     }
   };
 
-  if (selection.server) add(...verikit("server"));
+  if (selection.server) add(...verikit("core", "server"));
 
   if (selection.ui === "react" || selection.ui === "next") {
     add(
-      ...verikit("react"),
+      ...verikit("core", "react"),
       "@tanstack/react-query",
       "@tanstack/react-form",
       "@tanstack/react-table",
@@ -56,7 +61,7 @@ export function resolvePackages(selection: StackSelection): ResolvedPackages {
     if (selection.theme) add(...verikit("theme"));
   } else if (selection.ui === "vue") {
     add(
-      ...verikit("vue"),
+      ...verikit("core", "vue"),
       "@tanstack/vue-query",
       "@tanstack/vue-form",
       "@tanstack/vue-table",

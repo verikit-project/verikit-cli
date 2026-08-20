@@ -16,7 +16,7 @@ test("resolvePackages adds nothing when server is false and there's no UI/adapte
   assert.deepEqual(packages, []);
 });
 
-test("resolvePackages adds @verikit/server when server is true", () => {
+test("resolvePackages adds @verikit/core and @verikit/server when server is true", () => {
   const { packages } = resolvePackages({
     server: true,
     ui: null,
@@ -24,7 +24,10 @@ test("resolvePackages adds @verikit/server when server is true", () => {
     adapter: null,
     pkg: EMPTY_PKG,
   });
-  assert.deepEqual(packages, ["@verikit/server@latest"]);
+  assert.deepEqual(packages, [
+    "@verikit/core@latest",
+    "@verikit/server@latest",
+  ]);
 });
 
 test("resolvePackages adds React packages for ui: 'react'", () => {
@@ -36,6 +39,7 @@ test("resolvePackages adds React packages for ui: 'react'", () => {
     pkg: EMPTY_PKG,
   });
   assert.deepEqual(packages, [
+    "@verikit/core@latest",
     "@verikit/react@latest",
     "@tanstack/react-query",
     "@tanstack/react-form",
@@ -52,6 +56,7 @@ test("resolvePackages treats ui: 'next' the same as 'react'", () => {
     adapter: null,
     pkg: EMPTY_PKG,
   });
+  assert.ok(packages.includes("@verikit/core@latest"));
   assert.ok(packages.includes("@verikit/react@latest"));
 });
 
@@ -75,6 +80,7 @@ test("resolvePackages adds Vue packages for ui: 'vue'", () => {
     pkg: EMPTY_PKG,
   });
   assert.deepEqual(packages, [
+    "@verikit/core@latest",
     "@verikit/vue@latest",
     "@tanstack/vue-query",
     "@tanstack/vue-form",
@@ -92,6 +98,20 @@ test("resolvePackages adds the theme package for Vue when theme is true", () => 
     pkg: EMPTY_PKG,
   });
   assert.ok(packages.includes("@verikit/theme@latest"));
+});
+
+test("resolvePackages deduplicates @verikit/core when server and UI are both installed", () => {
+  const { packages } = resolvePackages({
+    server: true,
+    ui: "vue",
+    theme: false,
+    adapter: null,
+    pkg: EMPTY_PKG,
+  });
+  assert.equal(
+    packages.filter((spec) => spec === "@verikit/core@latest").length,
+    1,
+  );
 });
 
 test("resolvePackages adds the Prisma adapter package", () => {
@@ -132,6 +152,7 @@ test("resolvePackages skips packages the project already declares", () => {
   });
   assert.ok(!packages.includes("@verikit/react@latest"));
   assert.ok(!packages.includes("@tanstack/react-query"));
+  assert.ok(packages.includes("@verikit/core@latest"));
   assert.ok(packages.includes("@verikit/server@latest"));
   assert.ok(packages.includes("@tanstack/react-form"));
 });

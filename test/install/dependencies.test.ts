@@ -71,7 +71,7 @@ test("installPackages delegates to installCommand and the injected runner", asyn
 
   const result = await installPackages(
     "pnpm",
-    ["@verikit/server@latest"],
+    ["@verikit/core@latest", "@verikit/server@latest"],
     "/some/dir",
     fakeRun,
   );
@@ -80,7 +80,7 @@ test("installPackages delegates to installCommand and the injected runner", asyn
   assert.deepEqual(calls, [
     {
       command: "pnpm",
-      args: ["add", "@verikit/server@latest"],
+      args: ["add", "@verikit/core@latest", "@verikit/server@latest"],
       cwd: "/some/dir",
     },
   ]);

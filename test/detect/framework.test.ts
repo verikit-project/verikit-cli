@@ -50,6 +50,17 @@ test("detectFramework finds Vue", () => {
   }
 });
 
+test("detectFramework treats Nuxt as Vue", () => {
+  const dir = makeFixture();
+  try {
+    const result = detectFramework(dir, { dependencies: { nuxt: "4.0.0" } });
+    assert.equal(result.ui, "vue");
+    assert.equal(result.appDir, null);
+  } finally {
+    removeFixture(dir);
+  }
+});
+
 test("detectFramework finds plain React", () => {
   const dir = makeFixture();
   try {

@@ -26,7 +26,7 @@ export function detectFramework(cwd: string, pkg: PackageJson): FrameworkInfo {
   if (hasDependency(pkg, "next")) {
     return { ui: "next", appDir: findAppRouterRoot(cwd), typescript };
   }
-  if (hasDependency(pkg, "vue")) {
+  if (hasDependency(pkg, "vue") || hasDependency(pkg, "nuxt")) {
     return { ui: "vue", appDir: null, typescript };
   }
   if (hasDependency(pkg, "react")) {
