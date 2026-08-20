@@ -52,8 +52,8 @@ test("runInit: full happy path with Next.js + Prisma detected, install succeeds"
     assert.ok(events.some((e) => e.includes("Detected Prisma")));
     assert.equal(calls.length, 1);
     assert.equal(calls[0]?.manager, "npm");
-    assert.ok(calls[0]?.packages.includes("@verikit/prisma@^0.23.1"));
-    assert.ok(calls[0]?.packages.includes("@verikit/theme@^0.23.1"));
+    assert.ok(calls[0]?.packages.includes("@verikit/prisma@latest"));
+    assert.ok(calls[0]?.packages.includes("@verikit/theme@latest"));
     assert.ok(events.some((e) => e === "spinner:stop:Installed dependencies"));
 
     assert.equal(existsSync(path.join(dir, "src/verikit/server.ts")), true);
@@ -178,7 +178,7 @@ test("runInit lets an undetected UI framework be picked as React", async () => {
 
     await withCwd(dir, () => runInit({}, { prompts, installPackages }));
 
-    assert.ok(calls[0]?.packages.includes("@verikit/react@^0.23.1"));
+    assert.ok(calls[0]?.packages.includes("@verikit/react@latest"));
     assert.ok(
       events.some((e) => e.includes("Install VeriKit's default theme?")),
     );
@@ -195,7 +195,7 @@ test("runInit lets an undetected UI framework be picked as Vue", async () => {
 
     await withCwd(dir, () => runInit({}, { prompts, installPackages }));
 
-    assert.ok(calls[0]?.packages.includes("@verikit/vue@^0.23.1"));
+    assert.ok(calls[0]?.packages.includes("@verikit/vue@latest"));
   } finally {
     removeFixture(dir);
   }
@@ -234,8 +234,8 @@ test("runInit: both Prisma and Drizzle detected asks which adapter to use", asyn
     assert.ok(
       events.some((e) => e.includes("Both Prisma and Drizzle were detected")),
     );
-    assert.ok(calls[0]?.packages.includes("@verikit/drizzle@^0.23.1"));
-    assert.ok(!calls[0]?.packages.includes("@verikit/prisma@^0.23.1"));
+    assert.ok(calls[0]?.packages.includes("@verikit/drizzle@latest"));
+    assert.ok(!calls[0]?.packages.includes("@verikit/prisma@latest"));
   } finally {
     removeFixture(dir);
   }
@@ -273,7 +273,7 @@ test("runInit: Prisma-only detected can be declined", async () => {
 
     await withCwd(dir, () => runInit({}, { prompts, installPackages }));
 
-    assert.ok(!calls[0]?.packages.includes("@verikit/prisma@^0.23.1"));
+    assert.ok(!calls[0]?.packages.includes("@verikit/prisma@latest"));
   } finally {
     removeFixture(dir);
   }
@@ -305,7 +305,7 @@ test("runInit: Drizzle-only detected can be accepted", async () => {
 
     await withCwd(dir, () => runInit({}, { prompts, installPackages }));
 
-    assert.ok(calls[0]?.packages.includes("@verikit/drizzle@^0.23.1"));
+    assert.ok(calls[0]?.packages.includes("@verikit/drizzle@latest"));
   } finally {
     removeFixture(dir);
   }
@@ -338,7 +338,7 @@ test("runInit: no database detected offers Prisma as an adapter choice", async (
     await withCwd(dir, () => runInit({}, { prompts, installPackages }));
 
     assert.ok(events.some((e) => e.includes("Use a storage adapter?")));
-    assert.ok(calls[0]?.packages.includes("@verikit/prisma@^0.23.1"));
+    assert.ok(calls[0]?.packages.includes("@verikit/prisma@latest"));
   } finally {
     removeFixture(dir);
   }
@@ -370,7 +370,7 @@ test("runInit: theme prompt can be declined", async () => {
 
     await withCwd(dir, () => runInit({}, { prompts, installPackages }));
 
-    assert.ok(!calls[0]?.packages.includes("@verikit/theme@^0.23.1"));
+    assert.ok(!calls[0]?.packages.includes("@verikit/theme@latest"));
   } finally {
     removeFixture(dir);
   }
@@ -519,7 +519,7 @@ test("runInit packagesOnly: installs packages but generates no files", async () 
 
     assert.ok(events.some((e) => e.includes("Install these packages?")));
     assert.equal(calls.length, 1);
-    assert.ok(calls[0]?.packages.includes("@verikit/theme@^0.23.1"));
+    assert.ok(calls[0]?.packages.includes("@verikit/theme@latest"));
 
     assert.equal(existsSync(path.join(dir, "src/verikit/server.ts")), false);
     assert.equal(

@@ -9,13 +9,13 @@ import { hasDependency, type PackageJson } from "../detect/project.js";
  *
  * Keep in sync with the framework's @verikit/* versions.
  */
-const VERIKIT_VERSION = "^0.23.1";
+const VERIKIT_VERSION = "latest";
 
 function verikit(...names: string[]): string[] {
   return names.map((name) => `@verikit/${name}@${VERIKIT_VERSION}`);
 }
 
-/** Strips a trailing `@version` from an install spec, e.g. `"@verikit/react@^0.23.1"` -> `"@verikit/react"`. */
+/** Strips a trailing `@version` from an install spec, e.g. `"@verikit/react@latest"` -> `"@verikit/react"`. */
 function bareName(spec: string): string {
   const at = spec.lastIndexOf("@");
   return at > 0 ? spec.slice(0, at) : spec;

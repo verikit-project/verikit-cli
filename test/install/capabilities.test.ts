@@ -24,7 +24,7 @@ test("resolvePackages adds @verikit/server when server is true", () => {
     adapter: null,
     pkg: EMPTY_PKG,
   });
-  assert.deepEqual(packages, ["@verikit/server@^0.23.1"]);
+  assert.deepEqual(packages, ["@verikit/server@latest"]);
 });
 
 test("resolvePackages adds React packages for ui: 'react'", () => {
@@ -36,7 +36,7 @@ test("resolvePackages adds React packages for ui: 'react'", () => {
     pkg: EMPTY_PKG,
   });
   assert.deepEqual(packages, [
-    "@verikit/react@^0.23.1",
+    "@verikit/react@latest",
     "@tanstack/react-query",
     "@tanstack/react-form",
     "@tanstack/react-table",
@@ -52,7 +52,7 @@ test("resolvePackages treats ui: 'next' the same as 'react'", () => {
     adapter: null,
     pkg: EMPTY_PKG,
   });
-  assert.ok(packages.includes("@verikit/react@^0.23.1"));
+  assert.ok(packages.includes("@verikit/react@latest"));
 });
 
 test("resolvePackages adds the theme package for React when theme is true", () => {
@@ -63,7 +63,7 @@ test("resolvePackages adds the theme package for React when theme is true", () =
     adapter: null,
     pkg: EMPTY_PKG,
   });
-  assert.ok(packages.includes("@verikit/theme@^0.23.1"));
+  assert.ok(packages.includes("@verikit/theme@latest"));
 });
 
 test("resolvePackages adds Vue packages for ui: 'vue'", () => {
@@ -75,7 +75,7 @@ test("resolvePackages adds Vue packages for ui: 'vue'", () => {
     pkg: EMPTY_PKG,
   });
   assert.deepEqual(packages, [
-    "@verikit/vue@^0.23.1",
+    "@verikit/vue@latest",
     "@tanstack/vue-query",
     "@tanstack/vue-form",
     "@tanstack/vue-table",
@@ -91,7 +91,7 @@ test("resolvePackages adds the theme package for Vue when theme is true", () => 
     adapter: null,
     pkg: EMPTY_PKG,
   });
-  assert.ok(packages.includes("@verikit/theme@^0.23.1"));
+  assert.ok(packages.includes("@verikit/theme@latest"));
 });
 
 test("resolvePackages adds the Prisma adapter package", () => {
@@ -102,7 +102,7 @@ test("resolvePackages adds the Prisma adapter package", () => {
     adapter: "prisma",
     pkg: EMPTY_PKG,
   });
-  assert.deepEqual(packages, ["@verikit/prisma@^0.23.1"]);
+  assert.deepEqual(packages, ["@verikit/prisma@latest"]);
 });
 
 test("resolvePackages adds the Drizzle adapter package", () => {
@@ -113,7 +113,7 @@ test("resolvePackages adds the Drizzle adapter package", () => {
     adapter: "drizzle",
     pkg: EMPTY_PKG,
   });
-  assert.deepEqual(packages, ["@verikit/drizzle@^0.23.1"]);
+  assert.deepEqual(packages, ["@verikit/drizzle@latest"]);
 });
 
 test("resolvePackages skips packages the project already declares", () => {
@@ -130,8 +130,8 @@ test("resolvePackages skips packages the project already declares", () => {
     adapter: null,
     pkg,
   });
-  assert.ok(!packages.includes("@verikit/react@^0.23.1"));
+  assert.ok(!packages.includes("@verikit/react@latest"));
   assert.ok(!packages.includes("@tanstack/react-query"));
-  assert.ok(packages.includes("@verikit/server@^0.23.1"));
+  assert.ok(packages.includes("@verikit/server@latest"));
   assert.ok(packages.includes("@tanstack/react-form"));
 });
