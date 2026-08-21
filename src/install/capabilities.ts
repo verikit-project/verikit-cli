@@ -48,7 +48,7 @@ export function resolvePackages(selection: StackSelection): ResolvedPackages {
     }
   };
 
-  if (selection.server) add(...verikit("core", "server"));
+  if (selection.server) add(...verikit("core", "runtime", "client", "server"));
 
   if (selection.ui === "react" || selection.ui === "next") {
     add(

@@ -16,7 +16,7 @@ test("resolvePackages adds nothing when server is false and there's no UI/adapte
   assert.deepEqual(packages, []);
 });
 
-test("resolvePackages adds @verikit/core and @verikit/server when server is true", () => {
+test("resolvePackages adds server-side packages when server is true", () => {
   const { packages } = resolvePackages({
     server: true,
     ui: null,
@@ -26,6 +26,8 @@ test("resolvePackages adds @verikit/core and @verikit/server when server is true
   });
   assert.deepEqual(packages, [
     "@verikit/core@latest",
+    "@verikit/runtime@latest",
+    "@verikit/client@latest",
     "@verikit/server@latest",
   ]);
 });
@@ -153,6 +155,8 @@ test("resolvePackages skips packages the project already declares", () => {
   assert.ok(!packages.includes("@verikit/react@latest"));
   assert.ok(!packages.includes("@tanstack/react-query"));
   assert.ok(packages.includes("@verikit/core@latest"));
+  assert.ok(packages.includes("@verikit/runtime@latest"));
+  assert.ok(packages.includes("@verikit/client@latest"));
   assert.ok(packages.includes("@verikit/server@latest"));
   assert.ok(packages.includes("@tanstack/react-form"));
 });
